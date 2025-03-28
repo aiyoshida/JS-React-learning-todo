@@ -1,3 +1,4 @@
+import { CompletionTriggerKind } from "typescript";
 import "./styles.css";
 
 //追加ボタンを押した時のアロー関数
@@ -8,7 +9,11 @@ const onClickAdd = () => {
 
   //取得した後にinputのを空にする
   document.getElementById("add-text").value = "";
+  createIncompleteTodo(inputText);
+};
 
+//渡された引数を未完了のtodoを作成する関数
+const createIncompleteTodo = (todo) => {
   //JSでhtmlを作成する
   const li = document.createElement("li");
 
@@ -21,7 +26,7 @@ const onClickAdd = () => {
   const p = document.createElement("p");
   p.className = "todo-item";
   //p内のテキスト
-  p.innerText = inputText;
+  p.innerText = todo;
 
   //htmlに差し込む場所を指定
   document.getElementById("incomplete-list").appendChild(li);
@@ -30,6 +35,7 @@ const onClickAdd = () => {
   const completeButton = document.createElement("button");
   //ボタン内のテキストを指定
   completeButton.innerText = "完了";
+
   //動作を足す
   completeButton.addEventListener("click", () => {
     //押された完了ボタンの親にあるliタグ配下の完了ボタンと削除ボタンを削除
@@ -41,6 +47,11 @@ const onClickAdd = () => {
     //戻すボタンを作ってdivタグ配下に設定
     const backButton = document.createElement("button");
     backButton.innerText = "戻す";
+    backButton.addEventListener("click", () => {
+      const todoText = backButton.previousElementSibling.innerText;
+      createIncompleteTodo(todoText);
+      backButton.closest("li").remove();
+    });
     moveTarget.firstElementChild.appendChild(backButton);
     //complete-listに移動させる
     document.getElementById("complete-list").appendChild(moveTarget);
@@ -62,9 +73,8 @@ const onClickAdd = () => {
   div.appendChild(deleteButton);
   li.appendChild(div);
 };
+
 //「追加」ボタンで
 //document.getElementByIdはhtmlからid名を取得する
 //addEventListenerは、2つの引数を取る。1つ目は、イベントの種類、2つ目はどのアクションか
 document.getElementById("add-button").addEventListener("click", onClickAdd);
-
-//機能を実装。
